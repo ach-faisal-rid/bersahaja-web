@@ -52,6 +52,7 @@ class UserController extends Controller
             'role' => 'sometimes|in:user,admin'
         ]);
 
+        $validated['role'] = $validated['role'] ?? 'user';
         $validated['password'] = Hash::make($validated['password']);
         
         User::create($validated);
@@ -97,6 +98,8 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'sometimes|in:user,admin'
         ]);
+
+        $validated['role'] = $validated['role'] ?? $user->role;
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);

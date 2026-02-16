@@ -38,7 +38,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/favorit/user/{user}', [FavoritController::class, 'user'])->name('favorit.user');
 });
 
-Route::resource('users', UserController::class);
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+
 Route::resource('categories', CategoryController::class);
 Route::resource('tags', TagController::class);
 Route::resource('repositories', RepositoryController::class);

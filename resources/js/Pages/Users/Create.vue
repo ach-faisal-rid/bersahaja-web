@@ -12,6 +12,7 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
+    role: 'user',
 });
 
 const submit = () => {
@@ -63,6 +64,19 @@ const submit = () => {
                         autocomplete="email"
                     />
                     <InputError :message="form.errors.email" />
+                </div>
+
+                <div class="space-y-2">
+                    <InputLabel for="role" value="Role" />
+                    <select
+                        id="role"
+                        v-model="form.role"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <InputError :message="form.errors.role" />
                 </div>
 
                 <div class="space-y-2">

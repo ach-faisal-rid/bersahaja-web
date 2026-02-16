@@ -102,6 +102,7 @@ const formatDate = (value) => {
                             <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                 <th class="px-4 py-3">Nama</th>
                                 <th class="px-4 py-3">Email</th>
+                                <th class="px-4 py-3">Role</th>
                                 <th class="px-4 py-3">Status</th>
                                 <th class="px-4 py-3">Dibuat</th>
                                 <th class="px-4 py-3 text-right">Aksi</th>
@@ -109,7 +110,7 @@ const formatDate = (value) => {
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-800 dark:bg-gray-900/20">
                             <tr v-if="rows.length === 0">
-                                <td class="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400" colspan="5">
+                                <td class="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400" colspan="6">
                                     Belum ada user. Tambahkan user pertama kamu.
                                 </td>
                             </tr>
@@ -121,6 +122,16 @@ const formatDate = (value) => {
                                 </td>
                                 <td class="px-4 py-3">
                                     {{ user.email }}
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span
+                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                        :class="user.role === 'admin'
+                                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
+                                            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'"
+                                    >
+                                        {{ user.role || 'user' }}
+                                    </span>
                                 </td>
                                 <td class="px-4 py-3">
                                     <span
