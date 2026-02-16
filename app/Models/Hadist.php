@@ -13,13 +13,8 @@ class Hadist extends Model
         return $this->belongsTo(Category::class, 'kategori_id');
     }
 
-    public function sources()
+    public function hadistSources()
     {
-        return $this->hasMany(HadistSource::class);
-    }
-
-    public function doa()
-    {
-        return $this->belongsTo(Doa::class);
+        return $this->hasMany(HadistSource::class, 'hadist_id');
     }
 }

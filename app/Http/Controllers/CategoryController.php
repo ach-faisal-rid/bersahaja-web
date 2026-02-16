@@ -2,18 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
-use inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
     // menampilkan data kategori
-    public function index()
+    public function index(Request $request)
     {
-        $category = Category::all();
+        $search = $request->string('search')->toString();
+
+        $category = Category::query()
+            ->when($search, function ($query, $search) {
+                $query->where('nama', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Category/Index', [
-            'categories' => $category
+            'categories' => $category,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
@@ -26,41 +39,46 @@ class CategoryController extends Controller
     // menyimpan data kategori
     public function store(Request $request)
     {
-        $request->validate([
-            'nama' => 'required',
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255|unique:categories,nama',
         ]);
 
-        Category::create($request->all());
+        Category::create($validated);
         return redirect()->route('categories.index')
             ->with('success', 'Category created successfully.');
     }
 
     // menampilkan form edit kategori
-    public function edit($id)
+    public function edit(Category $category)
     {
-        $category = Category::find($id);
         return Inertia::render('Category/Edit', [
-            'category' => $category
+            'category' => $category,
         ]);
     }
 
     // memperbarui data kategori
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        $request->validate([
-            'nama' => 'required',
+        $validated = $request->validate([
+            'nama' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('categories', 'nama')->ignore($category->id),
+            ],
         ]);
-        $category = Category::find($id);
-        $category->update($request->all());
+
+        $category->update($validated);
+
         return redirect()->route('categories.index')
             ->with('success', 'Category updated successfully.');
     }
 
     // menghapus data kategori
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
         $category->delete();
+
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted successfully.');
     }

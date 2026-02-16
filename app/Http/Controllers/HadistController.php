@@ -47,7 +47,7 @@ class HadistController extends Controller
             'teks_arab' => 'required|string',
             'transliterasi' => 'required|string',
             'terjemah' => 'required|string',
-            'kategori_id' => 'nullable|exists:categories,id',
+            'kategori_id' => 'required|exists:categories,id',
             'audio_url' => 'nullable|url|max:255',
             'gambar_url' => 'nullable|url|max:255',
             'hadist_sources' => 'nullable|array',
@@ -84,7 +84,7 @@ class HadistController extends Controller
     public function edit(Hadist $hadist)
     {
         return Inertia::render('Hadist/Edit', [
-            'hadist' => $hadist->load('sources'),
+            'hadist' => $hadist->load('hadistSources'),
             'categories' => Category::select('id', 'nama')->orderBy('nama')->get(),
         ]);
     }
@@ -97,7 +97,7 @@ class HadistController extends Controller
             'teks_arab' => 'required|string',
             'transliterasi' => 'required|string',
             'terjemah' => 'required|string',
-            'kategori_id' => 'nullable|exists:categories,id',
+            'kategori_id' => 'required|exists:categories,id',
             'audio_url' => 'nullable|url|max:255',
             'gambar_url' => 'nullable|url|max:255',
             'hadist_sources' => 'nullable|array',
@@ -111,7 +111,7 @@ class HadistController extends Controller
         $hadist->update($validated);
 
         // Delete existing hadist sources
-        $hadist->sources()->delete();
+        $hadist->hadistSources()->delete();
 
         // Create new hadist sources
         $hadistSources = $request->input('hadist_sources', []);

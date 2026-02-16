@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Doa extends Model
 {
-    protected $fillable = ['remote_id', 'kategori_id', 'judul', 'teks_arab', 'transliterasi', 'terjemahan', 'description', 'is_active', 'source', 'fetched_at', 'hadith_sources'];
+    protected $fillable = ['remote_id', 'kategori_id', 'judul', 'teks_arab', 'transliterasi', 'terjemahan', 'description', 'is_active', 'source', 'fetched_at'];
 
     public function category()
     {
@@ -16,5 +16,10 @@ class Doa extends Model
     public function hadistSources()
     {
         return $this->hasMany(HadistSource::class, 'doa_id');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'doa_tags', 'doa_id', 'tag_id');
     }
 }

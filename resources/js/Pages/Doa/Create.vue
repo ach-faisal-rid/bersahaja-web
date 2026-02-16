@@ -13,6 +13,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    tags: {
+        type: Array,
+        default: () => [],
+    },
     repositories: {
         type: Array,
         default: () => [],
@@ -30,6 +34,7 @@ const form = useForm({
     is_active: true,
     source: '',
     fetched_at: '',
+    tag_ids: [],
     hadist_sources: [],
 });
 
@@ -166,6 +171,24 @@ const submit = () => {
                     <InputError :message="form.errors.description" />
                 </div>
 
+                <div class="space-y-2 md:col-span-2">
+                    <InputLabel for="tag_ids" value="Tags (Opsional)" />
+                    <select
+                        id="tag_ids"
+                        v-model="form.tag_ids"
+                        multiple
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    >
+                        <option v-for="tag in props.tags" :key="tag.id" :value="tag.id">
+                            {{ tag.nama }}
+                        </option>
+                    </select>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        Gunakan Ctrl/Cmd + klik untuk pilih lebih dari satu tag.
+                    </p>
+                    <InputError :message="form.errors.tag_ids" />
+                </div>
+
                 <div class="space-y-2">
                     <InputLabel for="source" value="Sumber (Opsional)" />
                     <TextInput id="source" v-model="form.source" type="text" class="block w-full" />
@@ -287,4 +310,3 @@ const submit = () => {
         </div>
     </AuthenticatedLayout>
 </template>
-

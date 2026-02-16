@@ -36,16 +36,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/favorit/add', [FavoritController::class, 'add'])->name('favorit.add');
     Route::delete('/favorit/remove', [FavoritController::class, 'remove'])->name('favorit.remove');
     Route::get('/favorit/user/{user}', [FavoritController::class, 'user'])->name('favorit.user');
+
+    Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('tags', TagController::class)->except(['show']);
+    Route::resource('repositories', RepositoryController::class)->except(['show']);
+    Route::resource('doas', DoaController::class);
+    Route::resource('hadists', HadistController::class);
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
 });
-
-Route::resource('categories', CategoryController::class);
-Route::resource('tags', TagController::class);
-Route::resource('repositories', RepositoryController::class);
-Route::resource('doas', DoaController::class);
-Route::resource('hadists', HadistController::class);
 
 require __DIR__.'/auth.php';

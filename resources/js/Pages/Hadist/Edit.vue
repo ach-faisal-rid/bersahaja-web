@@ -38,7 +38,7 @@ const form = useForm({
     kategori_id: props.hadist?.kategori_id ?? '',
     audio_url: props.hadist?.audio_url ?? '',
     gambar_url: props.hadist?.gambar_url ?? '',
-    hadist_sources: formatHadistSources(props.hadist?.sources),
+    hadist_sources: formatHadistSources(props.hadist?.hadist_sources),
 });
 
 const addHadistSource = () => {
@@ -83,11 +83,12 @@ const submit = () => {
 
             <form class="grid gap-6 md:grid-cols-2" @submit.prevent="submit">
                 <div class="space-y-2">
-                    <InputLabel for="kategori_id" value="Kategori (Opsional)" />
+                    <InputLabel for="kategori_id" value="Kategori" />
                     <select
                         id="kategori_id"
                         v-model="form.kategori_id"
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        required
                     >
                         <option value="">Pilih kategori</option>
                         <option v-for="category in props.categories" :key="category.id" :value="category.id">

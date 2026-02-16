@@ -26,7 +26,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->string('source')->default('local_seed');
             $table->timestamp('fetched_at')->nullable();
-            $table->json('hadith_sources')->nullable(); // Untuk multiple sources
             $table->timestamps();
             
             $table->index('is_active');
