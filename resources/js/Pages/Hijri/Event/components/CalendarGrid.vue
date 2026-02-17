@@ -9,8 +9,21 @@
       :class="{ 'has-event': cell.events && cell.events.length > 0 }"
     >
       <template v-if="cell.gregorianDay">
+        <button
+          v-if="pinEnabled"
+          type="button"
+          class="pin-btn"
+          :class="{ pinned: cell.isPinned }"
+          :title="cell.isPinned ? 'Ubah/Hapus pin' : 'Pin tanggal ini'"
+          @click="$emit('pin-click', cell)"
+        >
+          {{ cell.isPinned ? '★' : '☆' }}
+        </button>
         <div class="gregorian-day">{{ cell.gregorianDay }}</div>
         <div class="hijri-day">{{ cell.hijriDay }} {{ cell.hijriMonthShort }}</div>
+        <div v-if="cell.pinnedNote" class="pin-note" :title="cell.pinnedNote">
+          {{ cell.pinnedNote }}
+        </div>
 
         <div v-if="cell.events && cell.events.length > 0" class="event-stack">
           <div
@@ -41,7 +54,12 @@ export default {
       type: Array,
       required: true,
     },
+    pinEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
+  emits: ['pin-click'],
 };
 </script>
 
@@ -63,6 +81,20 @@ export default {
   background: #ffffff;
 }
 
+.pin-btn {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pin-btn.pinned {
+  color: #d97706;
+}
+
 .day-cell.has-event {
   border-color: #bae6fd;
   background: #f8fcff;
@@ -78,6 +110,16 @@ export default {
   margin-top: 0.1rem;
   font-size: 0.67rem;
   color: #334155;
+}
+
+.pin-note {
+  margin-top: 0.18rem;
+  font-size: 0.62rem;
+  color: #0f766e;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .event-stack {

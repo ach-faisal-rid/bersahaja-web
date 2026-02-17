@@ -9,7 +9,12 @@
           @next="nextMonth"
         />
 
-        <CalendarGrid :week-days="weekDays" :grid="grid" />
+        <CalendarGrid
+          :week-days="weekDays"
+          :grid="grid"
+          :pin-enabled="pinEnabled"
+          @pin-click="openPinDialog"
+        />
 
         <div v-if="loadingEvents" class="status status-loading">
           Menyinkronkan data kalender...
@@ -24,6 +29,16 @@
 
       <EventListPanel :event-list="eventList" :event-groups="eventGroups" />
     </div>
+
+    <PinNoteDialog
+      :open="pinDialogOpen"
+      :cell="selectedPinCell"
+      :model-value="pinNoteInput"
+      @update:modelValue="pinNoteInput = $event"
+      @close="closePinDialog"
+      @save="savePinNote"
+      @remove="removePin"
+    />
   </section>
 </template>
 
@@ -32,6 +47,7 @@ import { toHijri, toGregorian } from 'hijri-converter';
 import CalendarHeader from './components/CalendarHeader.vue';
 import CalendarGrid from './components/CalendarGrid.vue';
 import EventListPanel from './components/EventListPanel.vue';
+import PinNoteDialog from './components/PinNoteDialog.vue';
 
 export default {
   name: 'HijriCalendar',
@@ -39,6 +55,7 @@ export default {
     CalendarHeader,
     CalendarGrid,
     EventListPanel,
+    PinNoteDialog,
   },
   props: {
     eventsEndpoint: {
@@ -61,6 +78,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    pinEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    pinnedEndpoint: {
+      type: String,
+      default: '/hijri/pinned-days',
+    },
   },
   data() {
     const today = new Date();
@@ -70,8 +95,14 @@ export default {
       loadingEvents: false,
       eventError: '',
       eventInfo: '',
+      pinError: '',
       eventsByGregorianDay: {},
       rawEvents: [],
+      pinsByKey: {},
+      pinDialogOpen: false,
+      selectedPinCell: null,
+      pinNoteInput: '',
+      pinBusy: false,
       weekDays: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
       hijriMonthNames: [
         'Muharram', 'Safar', 'Rabiulawal', 'Rabiulakhir', 'Jumadilawal', 'Jumadilakhir',
@@ -109,11 +140,18 @@ export default {
 
       for (let d = 1; d <= daysInMonth; d++) {
         const h = this.gregorianToHijri(this.gregorianYear, this.gregorianMonth, d);
+        const pin = this.pinsByKey[this.pinKey(h.year, h.month, h.day)] || null;
         cells.push({
           gregorianDay: d,
           hijriDay: h.day,
+          hijriMonth: h.month,
+          hijriYear: h.year,
+          hijriMonthName: this.hijriMonthNames[h.month - 1] || '',
           hijriMonthShort: (this.hijriMonthNames[h.month - 1] || '').slice(0, 3),
           events: this.eventsByGregorianDay[d] || [],
+          isPinned: Boolean(pin),
+          pinnedId: pin?.id || null,
+          pinnedNote: pin?.note || '',
         });
       }
 
@@ -121,7 +159,7 @@ export default {
       return cells;
     },
     eventList() {
-      return this.rawEvents
+      const eventRows = this.rawEvents
         .map((event) => {
           const g = this.hijriToGregorian(Number(event.year), Number(event.month), Number(event.day));
           return {
@@ -140,6 +178,40 @@ export default {
         })
         .filter((event) => event.gYear === this.gregorianYear && event.gMonth === this.gregorianMonth)
         .sort((a, b) => a.gTs - b.gTs);
+
+      if (!this.pinEnabled) {
+        return eventRows;
+      }
+
+      const pinnedRows = Object.values(this.pinsByKey)
+        .map((pin) => {
+          const year = Number(pin.year);
+          const month = Number(pin.month);
+          const day = Number(pin.day);
+          const g = this.hijriToGregorian(year, month, day);
+          return {
+            id: `pin-${pin.id}`,
+            year,
+            month,
+            day,
+            title: pin.note && String(pin.note).trim() !== '' ? `Pin: ${pin.note}` : 'Pinned Day',
+            source: 'pinned-day',
+            color_hex: '#0f766e',
+            gYear: g.year,
+            gMonth: g.month,
+            gDay: g.day,
+            gTs: new Date(g.year, g.month - 1, g.day).getTime(),
+            gregorianLabel: new Date(g.year, g.month - 1, g.day).toLocaleDateString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            }),
+            hijriLabel: `${day}/${month}/${year} H`,
+          };
+        })
+        .filter((event) => event.gYear === this.gregorianYear && event.gMonth === this.gregorianMonth);
+
+      return [...eventRows, ...pinnedRows].sort((a, b) => a.gTs - b.gTs);
     },
     eventGroups() {
       const groups = {};
@@ -190,6 +262,7 @@ export default {
       this.loadingEvents = true;
       this.eventError = '';
       this.eventInfo = '';
+      this.pinError = '';
       try {
         if (this.syncEnabled) {
           const syncOk = await this.syncExternalEvents();
@@ -202,6 +275,11 @@ export default {
 
         const rows = await this.fetchHijriRowsForCurrentGregorianMonth();
         this.rawEvents = rows;
+        if (this.pinEnabled) {
+          await this.fetchPinnedDaysForCurrentGregorianMonth();
+        } else {
+          this.pinsByKey = {};
+        }
 
         const grouped = {};
         rows.forEach((event) => {
@@ -220,16 +298,11 @@ export default {
       }
     },
     async fetchHijriRowsForCurrentGregorianMonth() {
-      const uniqueHijriMonths = {};
-      const daysInMonth = new Date(this.gregorianYear, this.gregorianMonth, 0).getDate();
-      for (let d = 1; d <= daysInMonth; d++) {
-        const h = this.gregorianToHijri(this.gregorianYear, this.gregorianMonth, d);
-        uniqueHijriMonths[`${h.year}-${h.month}`] = { year: h.year, month: h.month };
-      }
+      const uniqueHijriMonths = this.getHijriMonthsForCurrentGregorianMonth();
 
       const allRows = [];
       const keys = new Set();
-      for (const period of Object.values(uniqueHijriMonths)) {
+      for (const period of uniqueHijriMonths) {
         const response = await fetch(`${this.eventsEndpoint}?year=${period.year}&month=${period.month}`, {
           headers: { Accept: 'application/json' },
         });
@@ -244,6 +317,101 @@ export default {
         });
       }
       return allRows;
+    },
+    getHijriMonthsForCurrentGregorianMonth() {
+      const uniqueHijriMonths = {};
+      const daysInMonth = new Date(this.gregorianYear, this.gregorianMonth, 0).getDate();
+      for (let d = 1; d <= daysInMonth; d++) {
+        const h = this.gregorianToHijri(this.gregorianYear, this.gregorianMonth, d);
+        uniqueHijriMonths[`${h.year}-${h.month}`] = { year: h.year, month: h.month };
+      }
+      return Object.values(uniqueHijriMonths);
+    },
+    async fetchPinnedDaysForCurrentGregorianMonth() {
+      if (!this.pinEnabled) return;
+
+      const months = this.getHijriMonthsForCurrentGregorianMonth();
+      const map = {};
+      for (const period of months) {
+        const response = await fetch(`${this.pinnedEndpoint}?year=${period.year}&month=${period.month}`, {
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) continue;
+        const payload = await response.json();
+        const rows = Array.isArray(payload?.data) ? payload.data : [];
+        rows.forEach((row) => {
+          const key = this.pinKey(Number(row.year), Number(row.month), Number(row.day));
+          map[key] = row;
+        });
+      }
+      this.pinsByKey = map;
+    },
+    pinKey(year, month, day) {
+      return `${year}-${month}-${day}`;
+    },
+    openPinDialog(cell) {
+      if (!this.pinEnabled || !cell?.gregorianDay) return;
+      this.selectedPinCell = cell;
+      this.pinNoteInput = cell.pinnedNote || '';
+      this.pinDialogOpen = true;
+    },
+    closePinDialog() {
+      this.pinDialogOpen = false;
+      this.selectedPinCell = null;
+      this.pinNoteInput = '';
+    },
+    async savePinNote() {
+      if (!this.selectedPinCell || this.pinBusy) return;
+      this.pinBusy = true;
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const response = await fetch(this.pinnedEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
+          },
+          body: JSON.stringify({
+            year: this.selectedPinCell.hijriYear,
+            month: this.selectedPinCell.hijriMonth,
+            day: this.selectedPinCell.hijriDay,
+            note: this.pinNoteInput || null,
+          }),
+        });
+        if (!response.ok) throw new Error('Gagal menyimpan pin.');
+        await this.fetchPinnedDaysForCurrentGregorianMonth();
+        this.closePinDialog();
+        this.eventInfo = 'Pin tanggal berhasil disimpan.';
+      } catch (error) {
+        this.pinError = error?.message || 'Gagal menyimpan pin.';
+        this.eventError = this.pinError;
+      } finally {
+        this.pinBusy = false;
+      }
+    },
+    async removePin() {
+      if (!this.selectedPinCell || !this.selectedPinCell.pinnedId || this.pinBusy) return;
+      this.pinBusy = true;
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const response = await fetch(`${this.pinnedEndpoint}/${this.selectedPinCell.pinnedId}`, {
+          method: 'DELETE',
+          headers: {
+            Accept: 'application/json',
+            ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
+          },
+        });
+        if (!response.ok) throw new Error('Gagal menghapus pin.');
+        await this.fetchPinnedDaysForCurrentGregorianMonth();
+        this.closePinDialog();
+        this.eventInfo = 'Pin tanggal berhasil dihapus.';
+      } catch (error) {
+        this.pinError = error?.message || 'Gagal menghapus pin.';
+        this.eventError = this.pinError;
+      } finally {
+        this.pinBusy = false;
+      }
     },
     async syncExternalEvents() {
       if (!this.syncEnabled) return true;

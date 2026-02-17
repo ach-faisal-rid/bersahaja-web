@@ -13,6 +13,7 @@ use App\Http\Controllers\HadistController;
 use App\Http\Controllers\FavoritController;
 use App\Http\Controllers\HijriEventController;
 use App\Http\Controllers\GuestPageController;
+use App\Http\Controllers\PinnedDayController;
 use App\Models\Doa;
 
 Route::get('/welcome', function () {
@@ -51,6 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/hijri', [HijriEventController::class, 'index'])->name('hijri.index');
     Route::get('/hijri/events', [HijriEventController::class, 'events'])->name('hijri.events');
     Route::post('/hijri/events/fetch-external', [HijriEventController::class, 'fetchExternal'])->name('hijri.events.fetch-external');
+    Route::get('/hijri/pinned-days', [PinnedDayController::class, 'index'])->name('hijri.pinned-days.index');
+    Route::post('/hijri/pinned-days', [PinnedDayController::class, 'store'])->name('hijri.pinned-days.store');
+    Route::delete('/hijri/pinned-days/{pinnedDay}', [PinnedDayController::class, 'destroy'])->name('hijri.pinned-days.destroy');
 
     Route::get('/doas/{doa}/tags', [DoaController::class, 'editTags'])->name('doas.tags.edit');
     Route::put('/doas/{doa}/tags', [DoaController::class, 'updateTags'])->name('doas.tags.update');

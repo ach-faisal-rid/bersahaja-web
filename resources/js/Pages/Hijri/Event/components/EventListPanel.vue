@@ -46,11 +46,13 @@ export default {
     sourceLabel(source) {
       if (source === 'libur.deno.dev') return 'libur nasional';
       if (source === 'aladhan') return 'aladhan';
+      if (source === 'pinned-day') return 'pinned';
       return source || '-';
     },
     sourceClass(source) {
       if (source === 'libur.deno.dev') return 'is-libur';
       if (source === 'aladhan') return 'is-aladhan';
+      if (source === 'pinned-day') return 'is-pinned';
       return 'is-default';
     },
   },
@@ -189,6 +191,11 @@ export default {
 .event-source.is-default {
   background: #e2e8f0;
   color: #334155;
+}
+
+.event-source.is-pinned {
+  background: #ccfbf1;
+  color: #0f766e;
 }
 
 @media (max-width: 640px) {

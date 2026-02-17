@@ -31,6 +31,7 @@ defineProps({
       <h2 class="panel-title">Kalender Hijriah</h2>
       <HijriCalendar
         :sync-enabled="false"
+        :pin-enabled="false"
         events-endpoint="/guest/hijri/events"
         list-position="side"
         :compact="true"
