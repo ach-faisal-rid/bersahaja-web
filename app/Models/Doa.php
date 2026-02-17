@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Doa extends Model
 {
     protected $fillable = ['remote_id', 'kategori_id', 'judul', 'teks_arab', 'transliterasi', 'terjemahan', 'description', 'is_active', 'source', 'fetched_at'];
+    protected $casts = [
+        'is_active' => 'boolean',
+        'fetched_at' => 'datetime',
+    ];
 
     public function category()
     {

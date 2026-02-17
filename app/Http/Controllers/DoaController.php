@@ -17,10 +17,18 @@ class DoaController extends Controller
     public function index(Request $request)
     {
         $search = $request->string('search')->toString();
+        $status = $request->string('status')->toString();
+        $status = in_array($status, ['all', 'active', 'inactive'], true) ? $status : 'all';
 
         $doas = Doa::with(['category', 'tags:id,nama'])
             ->when($search, function ($query, $search) {
                 $query->where('judul', 'like', "%{$search}%");
+            })
+            ->when($status === 'active', function ($query) {
+                $query->where('is_active', true);
+            })
+            ->when($status === 'inactive', function ($query) {
+                $query->where('is_active', false);
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10)
@@ -30,6 +38,7 @@ class DoaController extends Controller
             'doas' => $doas,
             'filters' => [
                 'search' => $search,
+                'status' => $status,
             ],
         ]);
     }
@@ -82,7 +91,9 @@ class DoaController extends Controller
 
         unset($validated['repository_id']);
 
-        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['is_active'] = $request->has('is_active')
+            ? $request->boolean('is_active')
+            : true;
 
         // Handle hadist_sources array
         $hadistSources = $request->input('hadist_sources', []);
@@ -170,7 +181,9 @@ class DoaController extends Controller
 
         unset($validated['repository_id']);
 
-        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['is_active'] = $request->has('is_active')
+            ? $request->boolean('is_active')
+            : (bool) $doa->is_active;
 
         // Handle hadist_sources array
         $hadistSources = $request->input('hadist_sources', []);

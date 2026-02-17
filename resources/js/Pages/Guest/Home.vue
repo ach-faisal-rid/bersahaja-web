@@ -38,18 +38,27 @@ defineProps({
     </section>
 
     <section class="grid-2">
-      <GuestTextCollection
+    
+    <GuestTextCollection
         title="Doa Pilihan"
+        subtitle="Ringkasan doa aktif terbaru"
         empty-text="Belum ada data doa."
         :items="doas"
         translation-key="terjemahan"
-      />
-      <GuestTextCollection
+        transliteration-key="transliterasi"
+        accent="teal"
+        :show-tags="true"
+    />
+      
+    <GuestTextCollection
         title="Hadist Pilihan"
+        subtitle="Ringkasan hadist terbaru"
         empty-text="Belum ada data hadist."
         :items="hadists"
         translation-key="terjemah"
-      />
+        transliteration-key="transliterasi"
+        accent="amber"
+    />
     </section>
   </div>
 </template>
