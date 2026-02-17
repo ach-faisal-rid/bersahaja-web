@@ -81,6 +81,16 @@ const navigationItems = [
         `
     },
     {
+        name: 'Hijri',
+        href: '/hijri',
+        icon: `
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1M4.2 6.2l.7.7M19.1 17.1l.7.7M3 12h1m16 0h1M4.2 17.8l.7-.7M19.1 6.9l.7-.7" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8a4 4 0 100 8 4 4 0 000-8z" />
+            </svg>
+        `
+    },
+    {
         name: 'Favorit',
         href: '/favorit',
         icon: `

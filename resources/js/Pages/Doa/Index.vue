@@ -32,12 +32,6 @@ const pagination = computed(() => {
     return props.doas?.links ?? null;
 });
 
-const truncate = (text, length = 30) => {
-    if (!text) return '-';
-    if (text.length <= length) return text;
-    return text.substring(0, length) + '...';
-};
-
 const search = ref(props.filters?.search ?? '');
 
 const submitSearch = () => {
@@ -46,19 +40,6 @@ const submitSearch = () => {
         { search: search.value },
         { preserveState: true, replace: true }
     );
-};
-
-const formatDate = (value) => {
-    if (!value) return '-';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '-';
-    return new Intl.DateTimeFormat('id-ID', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    }).format(date);
 };
 
 const deleteDoa = (doaId) => {
@@ -86,9 +67,9 @@ const deleteDoa = (doaId) => {
                     Kelola data doa.
                 </p>
 
-                <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                <div class="flex flex-col w-full gap-3 sm:w-auto sm:flex-row sm:items-center">
                     <form
-                        class="flex w-full items-center gap-2 sm:w-72"
+                        class="flex items-center w-full gap-2 sm:w-72"
                         @submit.prevent="submitSearch"
                     >
                         <TextInput
@@ -105,39 +86,30 @@ const deleteDoa = (doaId) => {
                 </div>
             </div>
 
-            <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/20">
+            <div class="overflow-hidden bg-white border border-gray-200 rounded-xl dark:border-gray-800 dark:bg-gray-900/20">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                         <thead class="bg-gray-50 dark:bg-gray-900/40">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                     Judul
                                 </th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                                    Remote ID
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                                    Source
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                     Kategori
                                 </th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                     Status
                                 </th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                                    Dibuat
-                                </th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                <th class="px-4 py-3 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400">
                                     Aksi
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
                             <tr v-if="rows.length === 0">
-                                <td class="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400" colspan="7">
+                                <td class="px-4 py-10 text-sm text-center text-gray-500 dark:text-gray-400" colspan="4">
                                     <div class="flex flex-col items-center justify-center gap-2">
-                                        <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                         <p>Belum ada doa. Tambahkan doa pertama.</p>
@@ -147,26 +119,12 @@ const deleteDoa = (doaId) => {
                             <tr
                                 v-for="doa in rows"
                                 :key="doa.id"
-                                class="text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                class="text-sm text-gray-700 transition-colors dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                             >
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-gray-900 dark:text-gray-100 max-w-xs">
+                                    <div class="max-w-xs font-medium text-gray-900 dark:text-gray-100">
                                         <div class="truncate" :title="doa.judul">
                                             {{ doa.judul }}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="text-gray-500 dark:text-gray-400 max-w-xs">
-                                        <div class="truncate font-mono text-xs" :title="doa.remote_id">
-                                            {{ doa.remote_id || '-' }}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="text-gray-500 dark:text-gray-400 max-w-xs">
-                                        <div class="truncate text-xs" :title="doa.source">
-                                            {{ doa.source || '-' }}
                                         </div>
                                     </div>
                                 </td>
@@ -185,11 +143,13 @@ const deleteDoa = (doaId) => {
                                         {{ doa.is_active ? 'Aktif' : 'Nonaktif' }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                    {{ formatDate(doa.created_at) }}
-                                </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-end gap-2">
+                                        <Link :href="`/doas/${doa.id}`">
+                                            <SecondaryButton class="text-xs px-3 py-1.5">
+                                                Lihat
+                                            </SecondaryButton>
+                                        </Link>
                                         <Link :href="`/doas/${doa.id}/edit`">
                                             <SecondaryButton class="text-xs px-3 py-1.5">
                                                 Edit
@@ -210,19 +170,19 @@ const deleteDoa = (doaId) => {
                 </div>
 
                 <!-- Pagination -->
-                <div v-if="pagination && pagination.length > 3" class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/40 px-4 py-3 sm:px-6">
-                    <div class="flex flex-1 justify-between sm:hidden">
+                <div v-if="pagination && pagination.length > 3" class="px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/40 sm:px-6">
+                    <div class="flex justify-between flex-1 sm:hidden">
                         <Link
                             v-if="pagination[0]?.url"
                             :href="pagination[0].url"
-                            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                            class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                         >
                             Sebelumnya
                         </Link>
                         <Link
                             v-if="pagination[pagination.length - 1]?.url"
                             :href="pagination[pagination.length - 1].url"
-                            class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                            class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                         >
                             Selanjutnya
                         </Link>
@@ -240,7 +200,7 @@ const deleteDoa = (doaId) => {
                             </p>
                         </div>
                         <div>
-                            <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                            <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
                                 <Link
                                     v-for="(link, index) in pagination"
                                     :key="index"

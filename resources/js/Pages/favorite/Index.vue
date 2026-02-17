@@ -12,21 +12,18 @@ const props = defineProps({
     },
 });
 
-const rows = computed(() => {
-    return props.favorits ?? [];
-});
+const rows = computed(() => props.favorits ?? []);
 
-const removeFavorit = (favoritableType, favoritableId) => {
+const removeFavorit = (type, id) => {
     if (confirm('Apakah Anda yakin ingin menghapus dari favorit?')) {
         router.delete('/favorit/remove', {
-            data: {
-                favoritable_type: favoritableType,
-                favoritable_id: favoritableId,
-            },
+            data: { favoritable_type: type, favoritable_id: id },
             preserveScroll: true,
         });
     }
 };
+
+const getTypeLabel = (type) => type === 'doa' ? 'Doa' : 'Hadist';
 </script>
 
 <template>
@@ -90,12 +87,11 @@ const removeFavorit = (favoritableType, favoritableId) => {
                                 </td>
                                 <td class="px-4 py-3">
                                     <span class="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                                        {{ item.favoritable_type === 'doa' ? 'Doa' : 'Hadist' }}
+                                        {{ getTypeLabel(item.favoritable_type) }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-end">
-                                        
                                         <DangerButton
                                             v-if="item.favoritable?.id"
                                             type="button"

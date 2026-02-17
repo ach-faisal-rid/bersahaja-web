@@ -11,8 +11,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\HadistController;
 use App\Http\Controllers\FavoritController;
+use App\Http\Controllers\HijriEventController;
+use App\Http\Controllers\GuestPageController;
+use App\Models\Doa;
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -20,6 +23,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/', [GuestPageController::class, 'index'])->name('guest.index');
+Route::get('/guest/hijri/events', [HijriEventController::class, 'events'])->name('guest.hijri.events');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -40,6 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('tags', TagController::class)->except(['show']);
     Route::resource('repositories', RepositoryController::class)->except(['show']);
+    
+    // Hijri calendar routes
+    Route::get('/hijri', [HijriEventController::class, 'index'])->name('hijri.index');
+    Route::get('/hijri/events', [HijriEventController::class, 'events'])->name('hijri.events');
+    Route::post('/hijri/events/fetch-external', [HijriEventController::class, 'fetchExternal'])->name('hijri.events.fetch-external');
+
+    Route::get('/doas/{doa}/tags', [DoaController::class, 'editTags'])->name('doas.tags.edit');
+    Route::put('/doas/{doa}/tags', [DoaController::class, 'updateTags'])->name('doas.tags.update');
     Route::resource('doas', DoaController::class);
     Route::resource('hadists', HadistController::class);
 });

@@ -18,7 +18,7 @@ class DoaController extends Controller
     {
         $search = $request->string('search')->toString();
 
-        $doas = Doa::with('category')
+        $doas = Doa::with(['category', 'tags:id,nama'])
             ->when($search, function ($query, $search) {
                 $query->where('judul', 'like', "%{$search}%");
             })
@@ -39,7 +39,6 @@ class DoaController extends Controller
     {
         return Inertia::render('Doa/Create', [
             'categories' => Category::select('id', 'nama')->orderBy('nama')->get(),
-            'tags' => Tag::select('id', 'nama')->orderBy('nama')->get(),
             'repositories' => Repository::select('id', 'nama', 'url')
                 ->where('is_active', true)
                 ->orderBy('nama')
@@ -61,8 +60,6 @@ class DoaController extends Controller
             'is_active' => 'nullable|boolean',
             'source' => 'nullable|string|max:255',
             'fetched_at' => 'nullable|date',
-            'tag_ids' => 'nullable|array',
-            'tag_ids.*' => 'integer|exists:tags,id',
             'hadist_sources' => 'nullable|array',
             'hadist_sources.*.book' => 'required|string|max:255',
             'hadist_sources.*.number' => 'nullable|integer',
@@ -86,15 +83,12 @@ class DoaController extends Controller
         unset($validated['repository_id']);
 
         $validated['is_active'] = $request->boolean('is_active', true);
-        $tagIds = $validated['tag_ids'] ?? [];
-        unset($validated['tag_ids']);
 
         // Handle hadist_sources array
         $hadistSources = $request->input('hadist_sources', []);
         unset($validated['hadist_sources']);
 
         $doa = Doa::create($validated);
-        $doa->tags()->sync($tagIds);
 
         // Create hadist sources
         if (!empty($hadistSources) && is_array($hadistSources)) {
@@ -116,12 +110,19 @@ class DoaController extends Controller
     }
 
     // edit doa
+    public function show(Doa $doa)
+    {
+        return Inertia::render('Doa/Show', [
+            'doa' => $doa->load(['category', 'tags:id,nama', 'hadistSources']),
+        ]);
+    }
+
+    // edit doa
     public function edit(Doa $doa)
     {
         return Inertia::render('Doa/Edit', [
-            'doa' => $doa->load(['hadistSources', 'tags:id,nama']),
+            'doa' => $doa->load('hadistSources'),
             'categories' => Category::select('id', 'nama')->orderBy('nama')->get(),
-            'tags' => Tag::select('id', 'nama')->orderBy('nama')->get(),
             'repositories' => Repository::select('id', 'nama', 'url')
                 ->where('is_active', true)
                 ->orderBy('nama')
@@ -143,8 +144,6 @@ class DoaController extends Controller
             'is_active' => 'nullable|boolean',
             'source' => 'nullable|string|max:255',
             'fetched_at' => 'nullable|date',
-            'tag_ids' => 'nullable|array',
-            'tag_ids.*' => 'integer|exists:tags,id',
             'hadist_sources' => 'nullable|array',
             'hadist_sources.*.book' => 'required|string|max:255',
             'hadist_sources.*.number' => 'nullable|integer',
@@ -172,15 +171,12 @@ class DoaController extends Controller
         unset($validated['repository_id']);
 
         $validated['is_active'] = $request->boolean('is_active', true);
-        $tagIds = $validated['tag_ids'] ?? [];
-        unset($validated['tag_ids']);
 
         // Handle hadist_sources array
         $hadistSources = $request->input('hadist_sources', []);
         unset($validated['hadist_sources']);
 
         $doa->update($validated);
-        $doa->tags()->sync($tagIds);
 
         // Delete existing hadist sources
         $doa->hadistSources()->delete();
@@ -202,6 +198,34 @@ class DoaController extends Controller
         }
 
         return redirect()->route('doas.index')->with('success', 'Doa berhasil diperbarui.');
+    }
+
+    public function editTags(Doa $doa)
+    {
+        return Inertia::render('Doa/Doa_Tag', [
+            'doa' => $doa->load('tags:id,nama'),
+            'tags' => Tag::select('id', 'nama')->orderBy('nama')->get(),
+        ]);
+    }
+
+    public function updateTags(Request $request, Doa $doa)
+    {
+        $validated = $request->validate([
+            'tag_ids' => 'nullable|array',
+            'tag_ids.*' => 'integer|exists:tags,id',
+        ]);
+
+        $tagIds = collect($validated['tag_ids'] ?? [])
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $doa->tags()->sync($tagIds);
+
+        return redirect()
+            ->route('doas.tags.edit', $doa)
+            ->with('success', 'Tag untuk doa berhasil diperbarui.');
     }
 
     // destroy doa

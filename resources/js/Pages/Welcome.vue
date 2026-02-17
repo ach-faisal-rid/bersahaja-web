@@ -16,6 +16,10 @@ defineProps({
         type: String,
         required: true,
     },
+    doas: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 function handleImageError() {
@@ -373,6 +377,43 @@ function handleImageError() {
                             </div>
                         </div>
                     </div>
+
+                    <section class="mt-10">
+                        <div
+                            class="rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] dark:bg-zinc-900 dark:ring-zinc-800"
+                        >
+                            <div class="mb-5 flex items-center justify-between gap-3">
+                                <h2 class="text-xl font-semibold text-black dark:text-white">
+                                    Doa Pilihan
+                                </h2>
+                                <span class="text-xs text-black/60 dark:text-white/60">
+                                    Tampil tanpa login
+                                </span>
+                            </div>
+
+                            <div v-if="doas.length === 0" class="text-sm text-black/60 dark:text-white/60">
+                                Belum ada data doa aktif.
+                            </div>
+
+                            <div v-else class="grid gap-4 md:grid-cols-2">
+                                <article
+                                    v-for="doa in doas"
+                                    :key="doa.id"
+                                    class="rounded-md border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/60"
+                                >
+                                    <h3 class="text-sm font-semibold text-black dark:text-white">
+                                        {{ doa.judul }}
+                                    </h3>
+                                    <p class="mt-2 text-right text-base leading-relaxed text-black dark:text-white" dir="rtl">
+                                        {{ doa.teks_arab }}
+                                    </p>
+                                    <p class="mt-2 text-sm text-black/70 line-clamp-3 dark:text-white/70">
+                                        {{ doa.terjemahan }}
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                    </section>
                 </main>
 
                 <footer
