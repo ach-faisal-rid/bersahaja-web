@@ -14,7 +14,10 @@ use App\Http\Controllers\FavoritController;
 use App\Http\Controllers\HijriEventController;
 use App\Http\Controllers\GuestPageController;
 use App\Http\Controllers\PinnedDayController;
-use App\Models\Doa;
+use App\Http\Controllers\TataCaraController;
+use App\Http\Controllers\GerakanShalatController;
+use App\Http\Controllers\BacaanController;
+use App\Http\Controllers\WuduController;
 
 Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
@@ -27,6 +30,16 @@ Route::get('/welcome', function () {
 
 Route::get('/', [GuestPageController::class, 'index'])->name('guest.index');
 Route::get('/guest/hijri/events', [HijriEventController::class, 'events'])->name('guest.hijri.events');
+
+// Public read-only routes for shalat modules
+Route::resource('tata-cara', TataCaraController::class)->only(['index', 'show']);
+Route::resource('gerakan-shalat', GerakanShalatController::class)->only(['index', 'show']);
+Route::resource('bacaan', BacaanController::class)->only(['index', 'show']);
+Route::resource('wudu', WuduController::class)->only(['index', 'show']);
+Route::resource('doas', DoaController::class)->only(['index', 'show']);
+Route::resource('hadists', HadistController::class)->only(['index']);
+Route::get('/hijri', [HijriEventController::class, 'index'])->name('hijri.index');
+Route::get('/hijri/events', [HijriEventController::class, 'events'])->name('hijri.events');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -49,8 +62,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('repositories', RepositoryController::class)->except(['show']);
     
     // Hijri calendar routes
-    Route::get('/hijri', [HijriEventController::class, 'index'])->name('hijri.index');
-    Route::get('/hijri/events', [HijriEventController::class, 'events'])->name('hijri.events');
     Route::post('/hijri/events/fetch-external', [HijriEventController::class, 'fetchExternal'])->name('hijri.events.fetch-external');
     Route::get('/hijri/pinned-days', [PinnedDayController::class, 'index'])->name('hijri.pinned-days.index');
     Route::post('/hijri/pinned-days', [PinnedDayController::class, 'store'])->name('hijri.pinned-days.store');
@@ -58,8 +69,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/doas/{doa}/tags', [DoaController::class, 'editTags'])->name('doas.tags.edit');
     Route::put('/doas/{doa}/tags', [DoaController::class, 'updateTags'])->name('doas.tags.update');
-    Route::resource('doas', DoaController::class);
-    Route::resource('hadists', HadistController::class);
+    Route::resource('doas', DoaController::class)->except(['index', 'show']);
+    Route::resource('hadists', HadistController::class)->except(['index', 'show']);
+    Route::resource('tata-cara', TataCaraController::class)->except(['index', 'show']);
+    Route::resource('gerakan-shalat', GerakanShalatController::class)->except(['index', 'show']);
+    Route::resource('bacaan', BacaanController::class)->except(['index', 'show']);
+    Route::resource('wudu', WuduController::class)->except(['index', 'show']);
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

@@ -136,11 +136,22 @@ export default {
       const daysInMonth = new Date(this.gregorianYear, this.gregorianMonth, 0).getDate();
 
       const cells = [];
-      for (let i = 0; i < startWeekday; i++) cells.push({});
+      
+      // Add empty cells untuk padding hari pertama bulan
+      for (let i = 0; i < startWeekday; i++) {
+        cells.push({
+          weekdayIndex: i,
+          isWeekend: i === 0 || i === 6, // Minggu atau Sabtu
+          isFriday: i === 5, // Jumat
+        });
+      }
 
+      // Add hari-hari di bulan ini
       for (let d = 1; d <= daysInMonth; d++) {
         const h = this.gregorianToHijri(this.gregorianYear, this.gregorianMonth, d);
         const pin = this.pinsByKey[this.pinKey(h.year, h.month, h.day)] || null;
+        const weekdayIndex = (startWeekday + d - 1) % 7; // 0=Sunday, 5=Friday, 6=Saturday
+        
         cells.push({
           gregorianDay: d,
           hijriDay: h.day,
@@ -152,10 +163,22 @@ export default {
           isPinned: Boolean(pin),
           pinnedId: pin?.id || null,
           pinnedNote: pin?.note || '',
+          weekdayIndex: weekdayIndex,
+          isWeekend: weekdayIndex === 0 || weekdayIndex === 6, // Minggu atau Sabtu
+          isFriday: weekdayIndex === 5, // Jumat
         });
       }
 
-      while (cells.length % 7 !== 0) cells.push({});
+      // Add empty cells untuk padding akhir bulan
+      while (cells.length % 7 !== 0) {
+        const nextWeekdayIndex = cells.length % 7;
+        cells.push({
+          weekdayIndex: nextWeekdayIndex,
+          isWeekend: nextWeekdayIndex === 0 || nextWeekdayIndex === 6,
+          isFriday: nextWeekdayIndex === 5,
+        });
+      }
+      
       return cells;
     },
     eventList() {

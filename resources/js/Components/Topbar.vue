@@ -1,6 +1,11 @@
 <script setup>
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
+import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const authUser = computed(() => page.props?.auth?.user ?? null);
 </script>
 
 <template>
@@ -13,14 +18,14 @@ import DropdownLink from '@/Components/DropdownLink.vue';
             </div>
 
             <div class="flex items-center">
-                <Dropdown align="right" width="48">
+                <Dropdown v-if="authUser" align="right" width="48">
                     <template #trigger>
                         <span class="inline-flex rounded-md">
                             <button
                                 type="button"
                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
                             >
-                                {{ $page.props.auth.user.name }}
+                                {{ authUser.name }}
 
                                 <svg
                                     class="-me-0.5 ms-2 h-4 w-4"
@@ -51,6 +56,15 @@ import DropdownLink from '@/Components/DropdownLink.vue';
                         </DropdownLink>
                     </template>
                 </Dropdown>
+
+                <div v-else class="flex items-center gap-2">
+                    <Link href="/login" class="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                        Login
+                    </Link>
+                    <Link href="/register" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white">
+                        Register
+                    </Link>
+                </div>
             </div>
         </div>
     </header>

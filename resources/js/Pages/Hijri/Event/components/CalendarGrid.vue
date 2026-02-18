@@ -6,7 +6,11 @@
       v-for="(cell, idx) in grid"
       :key="idx"
       class="day-cell"
-      :class="{ 'has-event': cell.events && cell.events.length > 0 }"
+      :class="{
+        'has-event': cell.events && cell.events.length > 0,
+        'is-friday': cell.isFriday,
+        'is-sunday': cell.weekdayIndex === 0,
+      }"
     >
       <template v-if="cell.gregorianDay">
         <button
@@ -98,6 +102,26 @@ export default {
 .day-cell.has-event {
   border-color: #bae6fd;
   background: #f8fcff;
+}
+
+.day-cell.is-friday {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.day-cell.is-friday.has-event {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.day-cell.is-sunday {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.day-cell.is-sunday.has-event {
+  background: #fee2e2;
+  border-color: #fca5a5;
 }
 
 .gregorian-day {

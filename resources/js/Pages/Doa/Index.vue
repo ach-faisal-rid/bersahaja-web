@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DoaListToolbar from './components/DoaListToolbar.vue';
 import DoaTable from './components/DoaTable.vue';
 import DoaPagination from './components/DoaPagination.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     doas: {
@@ -33,6 +33,8 @@ const pagination = computed(() => {
 
 const search = ref(props.filters?.search ?? '');
 const status = ref(props.filters?.status ?? 'all');
+const page = usePage();
+const canManage = computed(() => Boolean(page.props?.auth?.user));
 
 const submitSearch = () => {
     router.get(
@@ -65,11 +67,12 @@ const deleteDoa = (doaId) => {
             <DoaListToolbar
                 v-model="search"
                 :status-value="status"
+                :can-manage="canManage"
                 @update:status-value="status = $event"
                 @search="submitSearch"
             />
 
-            <DoaTable :rows="rows" @delete="deleteDoa" />
+            <DoaTable :rows="rows" :can-manage="canManage" @delete="deleteDoa" />
 
             <DoaPagination
                 :pagination="pagination"

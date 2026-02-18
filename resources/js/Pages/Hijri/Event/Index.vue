@@ -31,7 +31,11 @@ const isAuthenticated = computed(() => Boolean(page.props?.auth?.user));
       <h1 class="title">Kalender Hijriah</h1>
       <p class="caption">Sinkron event dari sumber global dan nasional.</p>
     </div>
-    <HijriCalendar />
+    <HijriCalendar
+      events-endpoint="/guest/hijri/events"
+      :sync-enabled="false"
+      :pin-enabled="false"
+    />
   </div>
 </template>
 

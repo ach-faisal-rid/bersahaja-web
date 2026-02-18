@@ -8,6 +8,10 @@ defineProps({
         type: Array,
         default: () => [],
     },
+    canManage: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 defineEmits(['delete']);
@@ -28,14 +32,17 @@ defineEmits(['delete']);
                         <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                             Status
                         </th>
-                        <th class="px-4 py-3 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400">
+                        <th
+                            v-if="canManage"
+                            class="px-4 py-3 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400"
+                        >
                             Aksi
                         </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
                     <tr v-if="rows.length === 0">
-                        <td class="px-4 py-10 text-sm text-center text-gray-500 dark:text-gray-400" colspan="4">
+                        <td class="px-4 py-10 text-sm text-center text-gray-500 dark:text-gray-400" :colspan="canManage ? 4 : 3">
                             <div class="flex flex-col items-center justify-center gap-2">
                                 <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -51,9 +58,9 @@ defineEmits(['delete']);
                     >
                         <td class="px-4 py-3">
                             <div class="max-w-xs font-medium text-gray-900 dark:text-gray-100">
-                                <div class="truncate" :title="doa.judul">
+                                <Link :href="`/doas/${doa.id}`" class="truncate hover:underline" :title="doa.judul">
                                     {{ doa.judul }}
-                                </div>
+                                </Link>
                             </div>
                         </td>
                         <td class="px-4 py-3">
@@ -71,7 +78,7 @@ defineEmits(['delete']);
                                 {{ doa.is_active ? 'Aktif' : 'Nonaktif' }}
                             </span>
                         </td>
-                        <td class="px-4 py-3">
+                        <td v-if="canManage" class="px-4 py-3">
                             <div class="flex items-center justify-end gap-2">
                                 <Link :href="`/doas/${doa.id}`">
                                     <SecondaryButton class="text-xs px-3 py-1.5">

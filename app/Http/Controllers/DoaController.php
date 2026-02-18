@@ -19,6 +19,11 @@ class DoaController extends Controller
         $search = $request->string('search')->toString();
         $status = $request->string('status')->toString();
         $status = in_array($status, ['all', 'active', 'inactive'], true) ? $status : 'all';
+        $isGuest = !auth()->check();
+
+        if ($isGuest) {
+            $status = 'active';
+        }
 
         $doas = Doa::with(['category', 'tags:id,nama'])
             ->when($search, function ($query, $search) {
@@ -123,6 +128,10 @@ class DoaController extends Controller
     // edit doa
     public function show(Doa $doa)
     {
+        if (!auth()->check() && !$doa->is_active) {
+            abort(404);
+        }
+
         return Inertia::render('Doa/Show', [
             'doa' => $doa->load(['category', 'tags:id,nama', 'hadistSources']),
         ]);

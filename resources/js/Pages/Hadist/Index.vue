@@ -5,7 +5,7 @@ import DangerButton from '@/Components/DangerButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     hadists: {
@@ -33,6 +33,8 @@ const pagination = computed(() => {
 });
 
 const search = ref(props.filters?.search ?? '');
+const page = usePage();
+const canManage = computed(() => Boolean(page.props?.auth?.user));
 
 const submitSearch = () => {
     router.get(
@@ -93,7 +95,7 @@ const deleteHadist = (hadistId) => {
                         <SecondaryButton type="submit">Cari</SecondaryButton>
                     </form>
 
-                    <Link href="/hadists/create">
+                    <Link v-if="canManage" href="/hadists/create">
                         <PrimaryButton>Tambah Hadist</PrimaryButton>
                     </Link>
                 </div>
@@ -122,14 +124,17 @@ const deleteHadist = (hadistId) => {
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                     Dibuat
                                 </th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                <th
+                                    v-if="canManage"
+                                    class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                                >
                                     Aksi
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
                             <tr v-if="rows.length === 0">
-                                <td class="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400" colspan="7">
+                                <td class="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400" :colspan="canManage ? 7 : 6">
                                     <div class="flex flex-col items-center justify-center gap-2">
                                         <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -179,7 +184,7 @@ const deleteHadist = (hadistId) => {
                                 <td class="px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                     {{ formatDate(hadist.created_at) }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td v-if="canManage" class="px-4 py-3">
                                     <div class="flex items-center justify-end gap-2">
                                         <Link :href="`/hadists/${hadist.id}/edit`">
                                             <SecondaryButton class="text-xs px-3 py-1.5">

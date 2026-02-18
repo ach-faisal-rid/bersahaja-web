@@ -1,7 +1,8 @@
 <script setup>
+import { computed } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     doa: {
@@ -9,6 +10,9 @@ const props = defineProps({
         default: () => ({}),
     },
 });
+
+const page = usePage();
+const canManage = computed(() => Boolean(page.props?.auth?.user));
 
 const formatDate = (value) => {
     if (!value) return '-';
@@ -40,7 +44,7 @@ const formatDate = (value) => {
                     Informasi lengkap doa dan relasi tag.
                 </p>
                 <div class="flex items-center gap-2">
-                    <Link :href="`/doas/${props.doa?.id}/tags`">
+                    <Link v-if="canManage" :href="`/doas/${props.doa?.id}/tags`">
                         <SecondaryButton>Kelola Tag</SecondaryButton>
                     </Link>
                     <Link href="/doas">
