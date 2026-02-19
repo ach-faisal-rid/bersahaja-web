@@ -51,4 +51,16 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_login_is_rate_limited_after_too_many_requests_from_same_ip(): void
+    {
+        for ($i = 0; $i < 20; $i++) {
+            $this->post('/login', []);
+        }
+
+        $response = $this->post('/login', []);
+
+        $response->assertStatus(429);
+        $this->assertGuest();
+    }
 }

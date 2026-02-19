@@ -23,9 +23,37 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'accept_terms' => 'on',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_registration_is_rate_limited_after_too_many_attempts(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->post('/register', []);
+        }
+
+        $response = $this->post('/register', []);
+
+        $response->assertStatus(429);
+        $this->assertGuest();
+    }
+
+    public function test_new_user_must_accept_terms_to_register(): void
+    {
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'Test User',
+            'email' => 'terms@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'accept_terms' => false,
+        ]);
+
+        $response->assertRedirect('/register');
+        $response->assertSessionHasErrors('accept_terms');
+        $this->assertGuest();
     }
 }

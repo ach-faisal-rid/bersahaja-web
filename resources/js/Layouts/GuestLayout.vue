@@ -18,5 +18,15 @@ import { Link } from '@inertiajs/vue3';
         >
             <slot />
         </div>
+
+        <div class="mt-6 mb-4 text-sm text-gray-600 dark:text-gray-400">
+            <Link :href="route('legal.terms')" class="underline hover:text-gray-900 dark:hover:text-gray-100">
+                Terms &amp; Conditions
+            </Link>
+            <span class="mx-2">|</span>
+            <Link :href="route('legal.privacy')" class="underline hover:text-gray-900 dark:hover:text-gray-100">
+                Privacy Policy
+            </Link>
+        </div>
     </div>
 </template>

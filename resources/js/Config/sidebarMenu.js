@@ -130,6 +130,12 @@ export const sidebarMenu = [
                 href: '/users',
                 icon: 'users',
             },
+            {
+                id: 'legal-content',
+                name: 'Legal Content',
+                href: '/admin/legal-content',
+                icon: 'tag',
+            },
         ],
     },
     {

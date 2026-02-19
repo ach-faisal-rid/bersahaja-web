@@ -107,12 +107,21 @@ defineProps({
         subtitle="Ringkasan hadist terbaru"
         empty-text="Belum ada data hadist."
         :items="hadists"
-        translation-key="terjemah"
+      translation-key="terjemahan"
         transliteration-key="transliterasi"
         accent="amber"
     />
     
     </section>
+
+    <footer class="home-footer">
+      <p class="home-footer-text">Dengan menggunakan layanan ini, Anda menyetujui ketentuan kami.</p>
+      <div class="home-footer-links">
+        <Link :href="route('legal.terms')" class="home-footer-link">Terms &amp; Conditions</Link>
+        <span class="home-footer-separator">|</span>
+        <Link :href="route('legal.privacy')" class="home-footer-link">Privacy Policy</Link>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -224,14 +233,53 @@ defineProps({
   border-color: #0f172a;
 }
 
-.guest-calendar-panel :deep(.calendar-shell) {
+.guest-calendar-panel ::v-deep(.calendar-shell) {
   max-width: 820px;
+  margin: 0 auto;
 }
 
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.8rem;
+}
+
+.home-footer {
+  margin-top: 0.85rem;
+  padding: 0.85rem 0.75rem;
+  border-top: 1px solid #cbd5e1;
+  text-align: center;
+}
+
+.home-footer-text {
+  margin: 0;
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.home-footer-links {
+  margin-top: 0.35rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.home-footer-link {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.home-footer-link:hover {
+  color: #0f766e;
+}
+
+.home-footer-separator {
+  font-size: 0.7rem;
+  color: #94a3b8;
 }
 
 @media (min-width: 960px) {

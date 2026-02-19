@@ -1,5 +1,6 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -11,6 +12,7 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
+    accept_terms: false,
 });
 
 const submit = () => {
@@ -90,6 +92,27 @@ const submit = () => {
                     class="mt-2"
                     :message="form.errors.password_confirmation"
                 />
+            </div>
+
+            <div class="mt-4">
+                <label class="flex items-start">
+                    <Checkbox
+                        id="accept_terms"
+                        name="accept_terms"
+                        v-model:checked="form.accept_terms"
+                    />
+                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                        I agree to the
+                        <Link :href="route('legal.terms')" class="underline hover:text-gray-900 dark:hover:text-gray-100">
+                            Terms &amp; Conditions
+                        </Link>
+                        and
+                        <Link :href="route('legal.privacy')" class="underline hover:text-gray-900 dark:hover:text-gray-100">
+                            Privacy Policy
+                        </Link>.
+                    </span>
+                </label>
+                <InputError class="mt-2" :message="form.errors.accept_terms" />
             </div>
 
             <div class="mt-4 flex items-center justify-end">

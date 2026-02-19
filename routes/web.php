@@ -18,6 +18,7 @@ use App\Http\Controllers\TataCaraController;
 use App\Http\Controllers\GerakanShalatController;
 use App\Http\Controllers\BacaanController;
 use App\Http\Controllers\WuduController;
+use App\Http\Controllers\LegalContentController;
 
 Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
@@ -30,6 +31,8 @@ Route::get('/welcome', function () {
 
 Route::get('/', [GuestPageController::class, 'index'])->name('guest.index');
 Route::get('/guest/hijri/events', [HijriEventController::class, 'events'])->name('guest.hijri.events');
+Route::get('/terms-and-conditions', [LegalContentController::class, 'terms'])->name('legal.terms');
+Route::get('/privacy-policy', [LegalContentController::class, 'privacy'])->name('legal.privacy');
 
 // Public read-only routes for shalat modules
 Route::resource('tata-cara', TataCaraController::class)->only(['index', 'show']);
@@ -79,6 +82,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
+    Route::get('/admin/legal-content', [LegalContentController::class, 'edit'])->name('admin.legal.edit');
+    Route::put('/admin/legal-content', [LegalContentController::class, 'update'])->name('admin.legal.update');
 });
 
 require __DIR__.'/auth.php';

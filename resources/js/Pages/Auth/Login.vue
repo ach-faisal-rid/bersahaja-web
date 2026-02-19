@@ -95,6 +95,17 @@ const submit = () => {
                     Log in
                 </PrimaryButton>
             </div>
+
+            <p class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                By continuing, you agree to our
+                <Link :href="route('legal.terms')" class="underline hover:text-gray-900 dark:hover:text-gray-100">
+                    Terms &amp; Conditions
+                </Link>
+                and
+                <Link :href="route('legal.privacy')" class="underline hover:text-gray-900 dark:hover:text-gray-100">
+                    Privacy Policy
+                </Link>.
+            </p>
         </form>
     </GuestLayout>
 </template>
