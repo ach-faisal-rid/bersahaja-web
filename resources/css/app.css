@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .arabic-text {
+        direction: rtl;
+        text-align: right;
+        unicode-bidi: plaintext;
+        font-family: 'Amiri', 'Noto Naskh Arabic', 'Scheherazade New', 'Traditional Arabic', serif;
+        line-height: 2;
+        letter-spacing: 0;
+    }
+
+    .arabic-snippet {
+        white-space: normal;
+        word-break: break-word;
+        font-size: 1rem;
+        color: rgb(31 41 55);
+    }
+}

@@ -17,8 +17,12 @@ use App\Http\Controllers\PinnedDayController;
 use App\Http\Controllers\TataCaraController;
 use App\Http\Controllers\GerakanShalatController;
 use App\Http\Controllers\BacaanController;
-use App\Http\Controllers\WuduController;
+use App\Http\Controllers\AdzanController;
+use App\Http\Controllers\KhutbahController;
+use App\Http\Controllers\DoaSetelahSholatController;
+use App\Http\Controllers\IqamatController;
 use App\Http\Controllers\LegalContentController;
+use App\Http\Controllers\WuduController;
 
 Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
@@ -41,6 +45,10 @@ Route::resource('bacaan', BacaanController::class)->only(['index', 'show']);
 Route::resource('wudu', WuduController::class)->only(['index', 'show']);
 Route::resource('doas', DoaController::class)->only(['index', 'show']);
 Route::resource('hadists', HadistController::class)->only(['index']);
+Route::resource('adzan', AdzanController::class)->only(['index', 'show']);
+Route::resource('khutbah', KhutbahController::class)->only(['index', 'show']);
+Route::resource('doa-setelah-sholat', DoaSetelahSholatController::class)->only(['index', 'show']);
+Route::resource('iqamat', IqamatController::class)->only(['index', 'show']);
 Route::get('/hijri', [HijriEventController::class, 'index'])->name('hijri.index');
 Route::get('/hijri/events', [HijriEventController::class, 'events'])->name('hijri.events');
 
@@ -78,6 +86,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('gerakan-shalat', GerakanShalatController::class)->except(['index', 'show']);
     Route::resource('bacaan', BacaanController::class)->except(['index', 'show']);
     Route::resource('wudu', WuduController::class)->except(['index', 'show']);
+    Route::resource('adzan', AdzanController::class)->except(['index', 'show']);
+    Route::resource('khutbah', KhutbahController::class)->except(['index', 'show']);
+    Route::resource('doa-setelah-sholat', DoaSetelahSholatController::class)->except(['index', 'show']);
+    Route::resource('iqamat', IqamatController::class)->except(['index', 'show']);
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

@@ -76,11 +76,11 @@ const formatDate = (value) => {
 
                 <!-- Doa Arab -->
                 <div v-if="wudu.doa_arab" class="rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
                         Doa Arab
                     </label>
-                    <div class="mt-2 rounded bg-gray-50 p-4 text-right dark:bg-gray-700">
-                        <p class="whitespace-pre-wrap text-lg text-gray-800 dark:text-gray-100">
+                    <div class="mt-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-500 dark:from-gray-700 dark:to-gray-600 dark:border-blue-400 p-8 shadow-sm">
+                        <p class="text-right text-2xl leading-loose font-arabic text-gray-900 dark:text-gray-100 whitespace-pre-wrap tracking-wider">
                             {{ wudu.doa_arab }}
                         </p>
                     </div>
@@ -88,11 +88,11 @@ const formatDate = (value) => {
 
                 <!-- Transliterasi -->
                 <div v-if="wudu.transliterasi" class="rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
                         Transliterasi (Latin)
                     </label>
-                    <div class="mt-2 rounded bg-gray-50 p-4 dark:bg-gray-700">
-                        <p class="whitespace-pre-wrap text-sm italic text-gray-800 dark:text-gray-100">
+                    <div class="mt-2 rounded-lg bg-gray-50 border-l-4 border-green-500 dark:bg-gray-700 dark:border-green-400 p-6 shadow-sm">
+                        <p class="whitespace-pre-wrap text-sm italic text-gray-800 dark:text-gray-100 leading-relaxed">
                             {{ wudu.transliterasi }}
                         </p>
                     </div>
@@ -100,11 +100,11 @@ const formatDate = (value) => {
 
                 <!-- Terjemahan -->
                 <div v-if="wudu.terjemahan" class="rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
                         Terjemahan Indonesia
                     </label>
-                    <div class="mt-2 rounded bg-gray-50 p-4 dark:bg-gray-700">
-                        <p class="whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-100">
+                    <div class="mt-2 rounded-lg bg-amber-50 border-l-4 border-amber-500 dark:bg-gray-700 dark:border-amber-400 p-6 shadow-sm">
+                        <p class="whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-100 leading-relaxed">
                             {{ wudu.terjemahan }}
                         </p>
                     </div>

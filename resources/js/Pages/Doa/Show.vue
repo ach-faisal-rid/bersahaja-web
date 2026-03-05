@@ -105,16 +105,22 @@ const formatDate = (value) => {
                         </div>
                     </div>
                     <div class="md:col-span-2">
-                        <p class="text-xs uppercase tracking-wider text-gray-500">Teks Arab</p>
-                        <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ props.doa?.teks_arab || '-' }}</p>
+                        <p class="text-xs uppercase tracking-wider text-gray-500 mb-3">Teks Arab</p>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-500 dark:from-gray-700 dark:to-gray-600 dark:border-blue-400 rounded-lg p-6 shadow-sm">
+                            <p class="text-right text-xl leading-loose font-arabic text-gray-900 dark:text-gray-100 whitespace-pre-wrap tracking-wider">{{ props.doa?.teks_arab || '-' }}</p>
+                        </div>
                     </div>
                     <div class="md:col-span-2">
-                        <p class="text-xs uppercase tracking-wider text-gray-500">Transliterasi</p>
-                        <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ props.doa?.transliterasi || '-' }}</p>
+                        <p class="text-xs uppercase tracking-wider text-gray-500 mb-3">Transliterasi</p>
+                        <div class="bg-gray-50 border-l-4 border-green-500 dark:bg-gray-700 dark:border-green-400 rounded-lg p-6 shadow-sm">
+                            <p class="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap leading-relaxed">{{ props.doa?.transliterasi || '-' }}</p>
+                        </div>
                     </div>
                     <div class="md:col-span-2">
-                        <p class="text-xs uppercase tracking-wider text-gray-500">Terjemahan</p>
-                        <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ props.doa?.terjemahan || '-' }}</p>
+                        <p class="text-xs uppercase tracking-wider text-gray-500 mb-3">Terjemahan</p>
+                        <div class="bg-amber-50 border-l-4 border-amber-500 dark:bg-gray-700 dark:border-amber-400 rounded-lg p-6 shadow-sm">
+                            <p class="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap leading-relaxed">{{ props.doa?.terjemahan || '-' }}</p>
+                        </div>
                     </div>
                     <div class="md:col-span-2">
                         <p class="text-xs uppercase tracking-wider text-gray-500">Deskripsi</p>

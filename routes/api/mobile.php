@@ -13,6 +13,10 @@ use App\Http\Controllers\Api\V1\HijriEventController;
 use App\Http\Controllers\Api\V1\FavoritController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\PinnedDayController;
+use App\Http\Controllers\Api\V1\AdzanController;
+use App\Http\Controllers\Api\V1\KhutbahController;
+use App\Http\Controllers\Api\V1\DoaSetelahSholatController;
+use App\Http\Controllers\Api\V1\IqamatController;
 
 Route::prefix('v1')->group(function () {
     // Public Authentication Routes
@@ -39,6 +43,18 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/wudu', [WuduController::class, 'index']);
     Route::get('/wudu/{wudu}', [WuduController::class, 'show']);
+
+    Route::get('/adzan', [AdzanController::class, 'index']);
+    Route::get('/adzan/{waktu}', [AdzanController::class, 'show']);
+
+    Route::get('/khutbah', [KhutbahController::class, 'index']);
+    Route::get('/khutbah/{khutbah}', [KhutbahController::class, 'show']);
+
+    Route::get('/doa-setelah-sholat', [DoaSetelahSholatController::class, 'index']);
+    Route::get('/doa-setelah-sholat/{doaSetelahSholat}', [DoaSetelahSholatController::class, 'show']);
+
+    Route::get('/iqamat', [IqamatController::class, 'index']);
+    Route::get('/iqamat/{waktu}', [IqamatController::class, 'show']);
 
     Route::get('/hijri/events', [HijriEventController::class, 'events']);
     Route::get('/hijri/calendar', [HijriEventController::class, 'calendar']);

@@ -78,32 +78,38 @@ const formatDate = (value) => {
 
                     <!-- Bacaan Arab -->
                     <div v-if="tataCara.bacaan_arab" class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                             Bacaan Arab
                         </label>
-                        <p class="mt-2 whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400">
-                            {{ tataCara.bacaan_arab }}
-                        </p>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-500 dark:from-gray-700 dark:to-gray-600 dark:border-blue-400 rounded-lg p-6 shadow-sm">
+                            <p class="text-right text-xl leading-loose font-arabic text-gray-900 dark:text-gray-100 whitespace-pre-wrap tracking-wider">
+                                {{ tataCara.bacaan_arab }}
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Transliterasi -->
                     <div v-if="tataCara.transliterasi" class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                             Transliterasi
                         </label>
-                        <p class="mt-2 whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400">
-                            {{ tataCara.transliterasi }}
-                        </p>
+                        <div class="bg-gray-50 border-l-4 border-green-500 dark:bg-gray-700 dark:border-green-400 rounded-lg p-6 shadow-sm">
+                            <p class="whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
+                                {{ tataCara.transliterasi }}
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Terjemahan -->
                     <div v-if="tataCara.terjemahan" class="md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                             Terjemahan
                         </label>
-                        <p class="mt-2 whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400">
-                            {{ tataCara.terjemahan }}
-                        </p>
+                        <div class="bg-amber-50 border-l-4 border-amber-500 dark:bg-gray-700 dark:border-amber-400 rounded-lg p-6 shadow-sm">
+                            <p class="whitespace-pre-wrap text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
+                                {{ tataCara.terjemahan }}
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Metadata -->
